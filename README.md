@@ -1,18 +1,30 @@
-# SIS 2 — Test Automation with Playwright
+# SIS 3 - CI platform
 
-Automated UI tests for the Toolshop practice application,
-implemented with TypeScript and Playwright.
+This project uses Jenkins in Docker.
 
-**Application:** https://practicesoftwaretesting.com/
+Jenkins was selected to demonstrate a self-hosted CI pipeline,
+agent configuration, parallel execution and report publication.
 
-## Project Objective
+## Environment
 
-Automate five groups of scenarios from the course:
+- Jenkins controller in Docker
+- Separate Playwright agent in Docker
+- Playwright version matching package-lock.json
+- Persistent npm cache
+- Two shards running on the same agent
 
-1. Registration.
-2. Login.
-3. Purchasing a product.
-4. Comparing products.
-5. Password-reset requests and validation.
+## Triggers
 
-The project contains seven automated tests across five spec files.
+The Multibranch Pipeline discovers branches and pull requests.
+GitHub webhooks trigger builds for pushes and pull request events.
+
+## Reports
+
+Each shard publishes an HTML report, traces and JUnit XML.
+Jenkins aggregates JUnit results.
+Builds and artifacts are retained for 14 days.
+
+## Limitations
+
+The tested application is an external public demo.
+TODO: describe availability of the Jenkins host and tunnel.
