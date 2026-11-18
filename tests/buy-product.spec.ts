@@ -21,7 +21,7 @@ test(
       await checkoutPage.openProduct();
 
       await expect(checkoutPage.productName).toBeVisible();
-      await expect(checkoutPage.productPrice).toBeVisible();
+      await expect(checkoutPage.productPrice).toHaveText('$999.99');
     });
 
     await test.step('Add the product and verify the cart', async () => {
