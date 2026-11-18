@@ -6,7 +6,7 @@ pipeline {
     parameters {
         choice(
             name: 'SHARDS',
-            choices: ['1', '2'],
+            choices: ['2', '1'],
             description: '1 = baseline, 2 = parallel execution'
         )
     }
