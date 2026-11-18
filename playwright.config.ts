@@ -10,16 +10,13 @@ export default defineConfig({
   retries: isCI ? 2 : 0,
   workers: isCI ? 1 : undefined,
 
-  reporter: isCI
-    ? [
-        ['list'],
-        ['blob'],
-        ['junit', { outputFile: 'reports/junit.xml' }],
-      ]
-    : [
-        ['list'],
-        ['html', { open: 'never' }],
-      ],
+  globalTimeout: isCI ? 15 * 60 * 1000 : undefined,
+
+  reporter: [
+    ['list'],
+    ['html', { open: 'never' }],
+    ['junit', { outputFile: 'reports/junit.xml' }],
+  ],
 
   use: {
     baseURL:

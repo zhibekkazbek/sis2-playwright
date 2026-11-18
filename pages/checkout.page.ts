@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 export class CheckoutPage {
   readonly productName: Locator;
@@ -31,7 +31,7 @@ export class CheckoutPage {
     );
 
     this.orderConfirmation = page.getByText(
-      /Thanks for your order! Your invoice number is INV-\d+\./,
+      /Thanks for your order!\s+Your invoice number is\s+INV-\d+\s*\./,
     );
   }
 
@@ -57,26 +57,33 @@ export class CheckoutPage {
   }
 
   async completeBillingAddress(address: {
+    country: string;
     houseNumber: string;
-    street: string;
-    city: string;
-    state: string;
     postalCode: string;
   }): Promise<void> {
-    await this.page.getByTestId('postal_code')
-      .fill(address.postalCode);
+    const country = this.page.getByTestId('country');
+    const postalCode = this.page.getByTestId('postal_code');
+    const houseNumber = this.page.getByTestId('house_number');
+    const street = this.page.getByTestId('street');
+    const city = this.page.getByTestId('city');
+    const state = this.page.getByTestId('state');
 
-    await this.page.getByTestId('house_number')
-      .fill(address.houseNumber);
+    // Clear the previous address before triggering a new lookup.
+    await postalCode.fill('');
+    await houseNumber.fill('');
+    await country.selectOption(address.country);
+    await street.fill('');
+    await city.fill('');
+    await state.fill('');
 
-    await this.page.getByTestId('street')
-      .fill(address.street);
+    await postalCode.fill(address.postalCode);
+    await houseNumber.fill(address.houseNumber);
+    await houseNumber.press('Tab');
 
-    await this.page.getByTestId('city')
-      .fill(address.city);
-
-    await this.page.getByTestId('state')
-      .fill(address.state);
+    // Keep the address returned by the site's lookup service.
+    await expect(street).toHaveValue(/\S+/);
+    await expect(city).toHaveValue(/\S+/);
+    await expect(state).toHaveValue(/\S+/);
 
     await this.page.getByTestId('proceed-3').click();
   }

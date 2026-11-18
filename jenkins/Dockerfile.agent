@@ -1,0 +1,20 @@
+ARG PW_VERSION=1.64.1
+FROM mcr.microsoft.com/playwright:v${PW_VERSION}-noble
+
+USER root
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       openjdk-21-jre-headless \
+       git \
+       curl \
+       ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /home/pwuser/agent /home/pwuser/.npm \
+    && chown -R pwuser:pwuser /home/pwuser
+
+USER pwuser
+WORKDIR /home/pwuser/agent
+
+CMD ["sh", "-c", "curl -fsS \"$JENKINS_URL/jnlpJars/agent.jar\" -o agent.jar && exec java -jar agent.jar -url \"$JENKINS_URL/\" -secret \"$JENKINS_SECRET\" -name playwright-agent -webSocket -workDir /home/pwuser/agent"]
